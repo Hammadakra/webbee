@@ -18,6 +18,15 @@ const styles = StyleSheet.create({
     backgroundColor: themeColors.primaryColor,
     borderRadius: vh * 3,
   },
+  emptyScreenContiner:{
+    alignItems:"center"
+  },
+  emptyText:{
+    color:themeColors.black,
+    fontSize:vh*2,
+    marginVertical: vh*2,
+    fontWeight:'bold'
+  }
 });
 
 export default styles;

@@ -4,41 +4,37 @@ import DrawerButton from '../DrawerButton';
 import styles from './styles';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {vh} from '../../../Utils/units';
+import { useSelector } from 'react-redux';
 
 const drawerRoutes = {
-  GeneralFilterScreen: {
-    title: 'Home',
+  DashboardScreen: {
+    title: 'Dashboard',
   },
-  CategoryScreen: {title: 'About Us'},
-  AnimatedContactUsNavigator: {
-    title: 'Contact Us',
-  },
+  CategoryScreen: {title: 'Category'},
+   
+  GeneralFilterScreen: {title: 'Filter'},
+   
 };
 
 type DrawerRoutes = keyof typeof drawerRoutes;
 
-const routeOrders: DrawerRoutes[] = ['GeneralFilterScreen', 'CategoryScreen'];
+const routeOrders: DrawerRoutes[] = ['DashboardScreen', 'CategoryScreen','GeneralFilterScreen'];
 
 interface DrawerContentProps {
   navigation: StackNavigationProp<any, any>; // Update this with the appropriate navigation prop type
 }
 
 const DrawerContent: React.FC<DrawerContentProps> = ({navigation}) => {
+  const storeCategory = useSelector(state => state.category?.catergory?.catergory);
+  console.log(storeCategory,"storeCategorystoreCategory");
+  
   const handleOnDrawerItemPress = (routeName: DrawerRoutes) => {
     navigation.navigate(routeName);
   };
 
   return (
-    <>
-      <View
-        style={{
-          flexDirection: 'row',
-          backgroundColor: 'red',
-          height: vh * 10,
-          width: vh * 20,
-        }}>
-        {/* Add any content related to the top section here */}
-      </View>
+    <View style={{backgroundColor:'gray',flex:1}}>
+     
       <View style={styles.container}>
         <View style={styles.innerContainer}>
           {routeOrders.map(item => {
@@ -53,7 +49,7 @@ const DrawerContent: React.FC<DrawerContentProps> = ({navigation}) => {
           })}
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

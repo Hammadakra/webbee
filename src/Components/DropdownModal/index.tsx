@@ -100,8 +100,7 @@ const DropdownModal: React.FC<SuccessPopupProps> = props => {
           />
         </View>
       </TouchableOpacity>
-
-      <Text>asdasd</Text>
+ 
     </Modal>
   );
 };

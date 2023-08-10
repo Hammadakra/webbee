@@ -68,7 +68,7 @@ const MachineComponent: React.FC<MachineProps> = ({
           label="Field"
           contentStyle={styles.contentStyle}
           mode="outlined"
-          value={item?.fieldTitle}
+          defaultValue={item?.fieldTitle}
           onChangeText={text => {
             onChangeTextAttribute(text, item?.id, currentItem?.id);
             onChangeText(text, currentItem?.id, 'initalTitle');

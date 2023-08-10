@@ -9,21 +9,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  iconContainer: {
-    height: vh * 5.1,
-    width: vh * 5.1,
-    borderRadius: (vh * 5.1) / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconStyle: {
-    height: vh * 2,
-    width: vh * 2,
-    resizeMode: 'contain',
-  },
+  
   titleStyle: {
-    color: themeColors.black,
-    fontSize: vh * 1.7,
+    color: themeColors.white,
+    fontSize: vh * 2.7,
   },
 });
 export default styles;

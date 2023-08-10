@@ -35,12 +35,14 @@ const DrawerNavigator: React.FC = () => {
         drawerContent={(props: DrawerContentComponentProps) => (
           <DrawerContent {...props} />
         )}>
+         <Drawer.Screen name="DashboardScreen" component={DashboardScreen}options={{ title: 'Dashboard' }} />
+        <Drawer.Screen name="CategoryScreen" component={CategoryScreen}     options={{ title: 'Category' }}/>
         <Drawer.Screen
           name="GeneralFilterScreen"
           component={GeneralFilterScreen}
+          options={{ title: 'General Filter' }}
         />
 
-        <Drawer.Screen name="CategoryScreen" component={CategoryScreen} />
       </Drawer.Navigator>
     </View>
   );

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, Text,RefreshControl, FlatList} from 'react-native';
 import uuid from 'react-native-uuid';
 import {Button} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
@@ -8,16 +8,15 @@ import MachineComponent from '../../Components/Machine';
 import {addCategory} from '../../Store/CategorySlice';
 
 const CategoryScreen: React.FC = props => {
-  const storeCategory = useSelector(state => state.category.category);
+  const storeCategory = useSelector(state => state.category?.catergory?.catergory);
 
   const dispatch = useDispatch();
 
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState(storeCategory?.length > 0 ? storeCategory : []);
   const [currentId, setCurrentId] = useState();
-
+  const [refreshing, setRefreshing] = useState(false);
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      console.log(storeCategory, '==========CCCa==================');
     });
 
     return unsubscribe;
@@ -58,7 +57,7 @@ const CategoryScreen: React.FC = props => {
         updatedCategory[targetIndex].attribute = updatedAttributes;
 
         setCategory(JSON.parse(JSON.stringify(updatedCategory)));
-        dispatch(addCategory([JSON.parse(JSON.stringify(updatedCategory))]));
+        dispatch(addCategory([...storeCategory,JSON.parse(JSON.stringify(updatedCategory))]));
       }
     }
   };
@@ -112,13 +111,22 @@ const CategoryScreen: React.FC = props => {
       return item;
     });
     setCategory(updatedCategory);
-    dispatch(addCategory(updatedCategory));
+    dispatch(addCategory([...storeCategory,updatedCategory]));
   };
-  //
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setCategory(storeCategory?.length > 0 ? storeCategory : []);
+      setRefreshing(false);
+    }, 1000);
+  };
   return (
     <View style={styles.container}>
-      <FlatList
+      {category?.length > 0 ? <FlatList
         data={category}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         renderItem={({item}) => (
           <MachineComponent
             item={item}
@@ -137,7 +145,12 @@ const CategoryScreen: React.FC = props => {
             }
           />
         )}
-      />
+      />: <View style={styles.emptyScreenContiner}>
+      <Text style={styles.emptyText}>
+        No Category Exist
+      </Text>
+      
+      </View>}
       <View style={styles.buttonMainContiner}>
         <Button
           mode="contained"

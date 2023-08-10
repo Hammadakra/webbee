@@ -1,32 +1,30 @@
 import React, {useState} from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, Text, RefreshControl, FlatList} from 'react-native';
 import styles from './styles';
-import LandscapeComponent from '../../Components/LandscapeWrapper/indes';
 import MachineComponent from '../../Components/Machine';
 import {Button} from 'react-native-paper';
-import themeColors from '../../Utils/themeColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {addCategory} from '../../Store/CategorySlice';
 import uuid from 'react-native-uuid';
+import {useIsFocused} from '@react-navigation/native';
 
-const CategoryScreen: React.FC = () => {
-  const storeCategory = useSelector(state => state.category?.category);
+const CategoryScreen: React.FC = props => {
+  const storeCategory = useSelector(
+    state => state.category?.catergory?.catergory,
+  );
   const dispatch = useDispatch();
-  console.log(storeCategory, 'storeCsategory');
-
-  const [category, setCategory] = useState([]);
+  const isFocused = useIsFocused();
+  const [refreshing, setRefreshing] = useState(false);
+  const [category, setCategory] = useState(
+    storeCategory?.length > 0 ? storeCategory : [],
+  );
   const [currentId, setCurrentId] = useState();
-  const addCategoryClick = () => {
-    const newParameter = {
-      type: 'New Categroy',
-      initalTitle: 'unNamed',
-      titleField: 'unNamed',
-      id: uuid.v4(),
-      attribute: [],
-    };
-    setCategory([...category, newParameter]);
-    dispatch(addCategory([...category, newParameter]));
-  };
+
+  React.useEffect(() => {
+    if (isFocused) {
+      setCategory(storeCategory?.length > 0 ? storeCategory : []);
+    }
+  }, [isFocused]);
 
   const onAddNewFieldClick = (inputType, id) => {
     const targetIndex = category.findIndex(item => item.id === currentId);
@@ -110,40 +108,55 @@ const CategoryScreen: React.FC = () => {
     console.log(updatedCategory[1].attribute, 'ITEM');
     dispatch(addCategory(updatedCategory));
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setCategory(storeCategory?.length > 0 ? storeCategory : []);
+      setRefreshing(false);
+    }, 1000);
+  };
   return (
     <View style={styles.container}>
-      <FlatList
-        data={category}
-        renderItem={({item}) => (
-          <MachineComponent
-            // type={item.type} attributes={item.attributes}
-            item={item}
-            onAddNewFieldClick={(filedType, id) =>
-              onAddNewFieldClick(filedType, id)
-            }
-            setCurrentId={setCurrentId}
-            onChangeText={(text, id) => onChangeCategory(text, id)}
-            removeAttribute={(itemid, attributeId) =>
-              removeAttribute(itemid, attributeId)
-            }
-            removeCategory={id => removeCategory(id)}
-            setCategory={setCategory}
-            onChangeTextAttribute={(text, attributeId, itemid) =>
-              onChangeTextAttribute(text, attributeId, itemid)
-            }
-          />
-        )}
-        keyExtractor={item => item.type}
-        contentContainerStyle={styles.listContainer}
-      />
-      <View style={styles.buttonMainContiner}>
-        <Button
-          mode="contained"
-          onPress={() => addCategoryClick()}
-          style={[styles.buttonContiner]}>
-          Add Category
-        </Button>
-      </View>
+      {category?.length > 0 ? (
+        <FlatList
+          data={category}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          renderItem={({item}) => (
+            <MachineComponent
+              // type={item.type} attributes={item.attributes}
+              item={item}
+              onAddNewFieldClick={(filedType, id) =>
+                onAddNewFieldClick(filedType, id)
+              }
+              setCurrentId={setCurrentId}
+              onChangeText={(text, id) => onChangeCategory(text, id)}
+              removeAttribute={(itemid, attributeId) =>
+                removeAttribute(itemid, attributeId)
+              }
+              removeCategory={id => removeCategory(id)}
+              setCategory={setCategory}
+              onChangeTextAttribute={(text, attributeId, itemid) =>
+                onChangeTextAttribute(text, attributeId, itemid)
+              }
+              
+            />
+          )}
+          keyExtractor={item => item.type}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <View style={styles.emptyScreenContiner}>
+          <Text style={styles.emptyText}>No Category Exist</Text>
+          <Button
+            mode="contained"
+            onPress={() => props.navigation.navigate('CategoryScreen')}
+            style={[styles.buttonContiner]}>
+            Add Category
+          </Button>
+        </View>
+      )}
     </View>
   );
 };
